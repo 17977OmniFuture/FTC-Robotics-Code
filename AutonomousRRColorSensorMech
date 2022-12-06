@@ -1,0 +1,501 @@
+// transfer code over to the color sensor
+
+
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import java.lang.annotation.Target;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
+
+@Autonomous(name = "AutonomousRRColorSensorMech", group = "AA")
+public class AutonomousRRColorSensorMech extends LinearOpMode {
+
+    //a = front right, b = back right, c = back left, d = front left
+    private DcMotor FL = null;
+    private DcMotor FR = null;
+    private DcMotor BR = null;
+    private DcMotor BL = null;
+    private DcMotor VS = null;
+    private ColorSensor sleeve_reader = null;
+    private Servo LC = null;
+    private Servo RC = null;
+    private String dom_color = null;
+
+    //put functions here
+    private void MoveForwardDistance (int Target, double Power) {
+
+        //makes sure the motors go the right way
+        FL.setDirection(DcMotor.Direction.FORWARD);
+        FR.setDirection(DcMotor.Direction.FORWARD);
+        BR.setDirection(DcMotor.Direction.FORWARD);
+        BL.setDirection(DcMotor.Direction.FORWARD);
+
+        //sets the motor positions to zero so they can measure how far they travel
+        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //makes sure the motors know how far they need to turn
+        FL.setTargetPosition(Target);
+        FR.setTargetPosition(Target);
+        BR.setTargetPosition(-1*Target);
+        BL.setTargetPosition(-1*Target);
+
+        //sets the motors to run to a certain position
+        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+        if (Target >= 0) {
+
+            while (!(FL.getCurrentPosition() <= Target - 10)) {
+
+                FL.setPower(Power);
+                FR.setPower(Power);
+                BR.setPower(Power);
+                BL.setPower(Power);
+
+            }
+
+        } else {
+
+            while (!(FL.getCurrentPosition() <= -1*Target - 10)) {
+
+                FL.setPower(Power);
+                FR.setPower(Power);
+                BR.setPower(Power);
+                BL.setPower(Power);
+
+            }
+
+        }
+
+        //power motors
+        FL.setPower(Power);
+        FR.setPower(Power);
+        BR.setPower(Power);
+        BL.setPower(Power);
+
+
+    }
+
+    //when target is negative, make sure power is negative !!!!
+    private void Turn (int Target, double Power) {
+
+        //makes sure the motors go the right way
+        FL.setDirection(DcMotor.Direction.FORWARD);
+        FR.setDirection(DcMotor.Direction.FORWARD);
+        BR.setDirection(DcMotor.Direction.FORWARD);
+        BL.setDirection(DcMotor.Direction.FORWARD);
+
+        //sets the motor positions to zero so they can measure how far they travel
+        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //makes sure the motors know how far they need to turn
+        FL.setTargetPosition(Target);
+        FR.setTargetPosition(Target);
+        BR.setTargetPosition(Target);
+        BL.setTargetPosition(Target);
+
+        //sets the motors to run to a certain position
+        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+        if (Target >= 0) {
+
+            while (!(FL.getCurrentPosition() <= Target - 10)) {
+
+                FL.setPower(Power);
+                FR.setPower(Power);
+                BR.setPower(Power);
+                BL.setPower(Power);
+
+            }
+
+        } else {
+
+            while (!(FL.getCurrentPosition() <= -1*Target - 10)) {
+
+                FL.setPower(Power);
+                FR.setPower(Power);
+                BR.setPower(Power);
+                BL.setPower(Power);
+
+            }
+
+        }
+
+        //power motors
+        FL.setPower(Power);
+        FR.setPower(Power);
+        BR.setPower(Power);
+        BL.setPower(Power);
+
+
+    }
+
+    //heading uses degrees, by default power is 1
+    /*private void Strafe (int Target, double Power, double Heading) {
+
+        //makes sure the motors go the right way
+        FL.setDirection(DcMotor.Direction.FORWARD);
+        FR.setDirection(DcMotor.Direction.FORWARD);
+        BR.setDirection(DcMotor.Direction.FORWARD);
+        BL.setDirection(DcMotor.Direction.FORWARD);
+
+        //sets the motor positions to zero so they can measure how far they travel
+        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //makes sure the motors know how far they need to turn
+        FL.setTargetPosition(Target);
+        FR.setTargetPosition(Target);
+        BR.setTargetPosition(-1*Target);
+        BL.setTargetPosition(-1*Target);
+
+        //convert heading to radians
+        double Heading_ac = Heading + 45;
+        Heading_ac /= 180;
+        Heading_ac *= Math.PI;
+        double Heading_bd = Heading - 45;
+        Heading_bd /= 180;
+        Heading_bd *= Math.PI;
+
+
+
+        //convert radian direction into necessary power
+        Heading_ac = Math.cos(Heading_ac);
+        Heading_bd = Math.cos(Heading_bd);
+
+        //figure out which motors are going faster, and scale that to 1 so the robot always goes at max power
+        double Heading_scale_factor = Math.max(Heading_ac, Heading_bd);
+        Heading_scale_factor = 1/Heading_scale_factor;
+        Heading_ac *= Heading_scale_factor;
+        Heading_bd *= Heading_scale_factor;
+
+
+        if (Target >= 0) {
+
+            while (!(FL.getCurrentPosition() <= Target - 10)) {
+
+                FL.setPower(Power*Heading_ac);
+                FR.setPower(Power*Heading_bd);
+                BR.setPower(Power*Heading_ac);
+                BL.setPower(Power*Heading_bd);
+
+
+            }
+
+        } else {
+
+            while (!(FL.getCurrentPosition() <= -1*Target - 10)) {
+
+                FL.setPower(Power*Heading_ac);
+                FR.setPower(Power*Heading_bd);
+                BR.setPower(Power*Heading_ac);
+                BL.setPower(Power*Heading_bd);
+
+
+            }
+
+        }
+
+
+        //power motors
+        FL.setPower(Power*Heading_ac);
+        FR.setPower(Power*Heading_bd);
+        BR.setPower(Power*Heading_ac);
+        BL.setPower(Power*Heading_bd);
+
+
+
+
+    } */
+
+    //heading uses set values, 0 = left, 1 = right, anything else is backwards
+    private void Strafe (int Target, int direction, double Power) {
+
+        //makes sure the motors go the right way
+        FL.setDirection(DcMotor.Direction.FORWARD);
+        FR.setDirection(DcMotor.Direction.FORWARD);
+        BR.setDirection(DcMotor.Direction.FORWARD);
+        BL.setDirection(DcMotor.Direction.FORWARD);
+
+        //sets the motor positions to zero so they can measure how far they travel
+        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        if (direction == 0) {
+
+            //left
+            FL.setTargetPosition(Target);
+            FR.setTargetPosition(-1*Target);
+            BR.setTargetPosition(-1*Target);
+            BL.setTargetPosition(Target);
+
+
+        } else if (direction == 1) {
+
+            //right
+            FL.setTargetPosition(-1*Target);
+            FR.setTargetPosition(Target);
+            BR.setTargetPosition(Target);
+            BL.setTargetPosition(-1*Target);
+
+        } else {
+
+            //back
+            FL.setTargetPosition(-1*Target);
+            FR.setTargetPosition(-1*Target);
+            BR.setTargetPosition(Target);
+            BL.setTargetPosition(Target);
+
+        }
+
+        //sets the motors to run to a certain position
+        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        if (Target >= 0) {
+
+            while (!(FL.getCurrentPosition() <= Target - 10)) {
+
+                FL.setPower(Power);
+                FR.setPower(Power);
+                BR.setPower(Power);
+                BL.setPower(Power);
+
+            }
+
+        } else {
+
+            while (!(FL.getCurrentPosition() <= -1*Target - 10)) {
+
+                FL.setPower(Power);
+                FR.setPower(Power);
+                BR.setPower(Power);
+                BL.setPower(Power);
+
+            }
+
+        }
+
+
+
+    }
+
+    private void ArmExtend () {
+
+        VS.setTargetPosition(1000);
+        VS.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        VS.setPower(0.8);
+
+
+
+    }
+
+    private void Drop () {
+
+        RC.setPosition(0);
+        LC.setPosition(1);
+
+    }
+
+    private void Close () {
+
+        RC.setPosition(1);
+        LC.setPosition(0);
+
+    }
+
+    private void Lower () {
+
+        VS.setTargetPosition(0);
+
+    }
+
+    @Override
+    public void runOpMode() {
+
+        //put initialization here
+        FL  = hardwareMap.get(DcMotor.class, "FL");
+        FR = hardwareMap.get(DcMotor.class, "FR");
+        BR  = hardwareMap.get(DcMotor.class, "BR");
+        BL = hardwareMap.get(DcMotor.class, "BL");
+        sleeve_reader = hardwareMap.get(ColorSensor.class, "sleeve_reader");
+        VS = hardwareMap.get(DcMotor.class, "VS");
+        RC = hardwareMap.get(Servo.class, "RC");
+        LC = hardwareMap.get(Servo.class, "LC");
+
+        waitForStart();
+        Close();
+        MoveForwardDistance(1200, 1);
+        sleep(3000);
+
+        if (sleeve_reader.red() > sleeve_reader.green() && sleeve_reader.red() > sleeve_reader.blue()) {
+
+            dom_color = "r";
+
+
+        } else if (sleeve_reader.green() > sleeve_reader.red() && sleeve_reader.green() > sleeve_reader.blue()) {
+
+            dom_color = "g";
+
+
+        } else {
+
+            dom_color = "b";
+
+
+        }
+
+        //1 is left
+        //backwards code
+        //put logic here
+        if (dom_color == "g") {
+
+            ArmExtend();
+            MoveForwardDistance(3000,1);
+            sleep(3000);
+            Turn(500,1);
+            sleep(2000);
+            MoveForwardDistance(500,1);
+            sleep(500);
+            Drop();
+            sleep(1500);
+            MoveForwardDistance(-500,1);
+            sleep(500);
+            Turn(-1500,1);
+            Lower();
+            sleep(2000);
+            MoveForwardDistance(1000,1);
+            sleep(1000);
+            Close();
+            MoveForwardDistance(-1000,1);
+            sleep(1000);
+            Turn(-1000,1);
+            ArmExtend();
+            sleep(1000);
+            MoveForwardDistance(1000,1);
+            sleep(1000);
+            Drop();
+            sleep(500);
+            Turn(1000,1);
+            sleep(1000);
+            MoveForwardDistance(-1000,1);
+            sleep(1000);
+            Turn(-1000,1);
+            sleep(1000);
+            MoveForwardDistance(-2000,1);
+            sleep(2000);
+
+
+        } else if (dom_color == "r") {
+
+            ArmExtend();
+            MoveForwardDistance(3000,1);
+            sleep(3000);
+            Turn(500,1);
+            sleep(2000);
+            MoveForwardDistance(500,1);
+            sleep(500);
+            Drop();
+            sleep(1500);
+            MoveForwardDistance(-500,1);
+            sleep(500);
+            Turn(-1500,1);
+            Lower();
+            sleep(2000);
+            MoveForwardDistance(1000,1);
+            sleep(1000);
+            Close();
+            MoveForwardDistance(-1000,1);
+            sleep(1000);
+            Turn(-1000,1);
+            ArmExtend();
+            sleep(1000);
+            MoveForwardDistance(1000,1);
+            sleep(1000);
+            Drop();
+            sleep(500);
+            Turn(1000,1);
+            sleep(1000);
+            MoveForwardDistance(-500,1);
+            sleep(1000);
+            Turn(-1000,1);
+            sleep(1000);
+            MoveForwardDistance(-2000,1);
+            sleep(2000);
+
+        } else {
+
+            ArmExtend();
+            MoveForwardDistance(3000,1);
+            sleep(3000);
+            Turn(500,1);
+            sleep(2000);
+            MoveForwardDistance(500,1);
+            sleep(500);
+            Drop();
+            sleep(1500);
+            MoveForwardDistance(-500,1);
+            sleep(500);
+            Turn(-1500,1);
+            Lower();
+            sleep(2000);
+            MoveForwardDistance(1000,1);
+            sleep(1000);
+            Close();
+            MoveForwardDistance(-1000,1);
+            sleep(1000);
+            Turn(-1000,1);
+            ArmExtend();
+            sleep(1000);
+            MoveForwardDistance(1000,1);
+            sleep(1000);
+            Drop();
+            sleep(500);
+            Turn(1000,1);
+            sleep(1000);
+            MoveForwardDistance(500,1);
+            sleep(1000);
+            Turn(-1000,1);
+            sleep(1000);
+            MoveForwardDistance(-2000,1);
+            sleep(2000);
+
+        }
+
+
+
+
+
+
+
+
+
+    }
+
+}
