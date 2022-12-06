@@ -1,0 +1,174 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.hardware.motors.GoBILDA5202Series;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.Servo;
+
+public class DrivetrainMechanum {
+    // Declare OpMode members
+    //a =
+    private DcMotor FL = null;
+    private DcMotor FR = null;
+    private DcMotor BR = null;
+    private DcMotor BL = null;
+    private DcMotor VS = null;
+    private Servo LC = null;
+    private Servo RC = null;
+
+    @Override
+    public void runOpMode() {
+
+
+        // Initialize the hardware variables. Note that the strings used here as parameters
+        // to 'get' must correspond to the names assigned during the robot configuration
+        // step (using the FTC Robot Controller app on the phone).
+        FL  = hardwareMap.get(DcMotor.class, "FL");
+        FR = hardwareMap.get(DcMotor.class, "FR");
+        BR  = hardwareMap.get(DcMotor.class, "BR");
+        BL = hardwareMap.get(DcMotor.class, "BL");
+        VS = hardwareMap.get(DcMotor.class, "VS");
+        LC = hardwareMap.get(Servo.class, "LC");
+        RC = hardwareMap.get(Servo.class, "RC");
+
+        //a = fl, b = fr, c = br, d = bl, y = vs
+        VS.setTargetPosition(0);
+        VS.setPower(1);
+        FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        VS.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        /*
+        wheel diameter = ~3.5 in
+        pi = ~3.14
+        wheel circumference = ~11 in
+
+
+        6 + 6sqrt2 = full side length of robot
+        7 + 6sqrt2 = full side length of robot + wheel width
+
+        pi*(7 + 6sqrt2) = robot circumference
+        robot circumference/wheel circumference = wheel rotations per robot rotation
+
+        can use as distance/heading calculator???
+
+
+        ~5.7 wheel rots in one robot rot
+         */
+
+
+        // Most robots need the motor on one side to be reversed to drive forward
+        // Reverse the motor that runs backwards when connected directly to the battery
+        FL.setDirection(DcMotor.Direction.REVERSE);
+        FR.setDirection(DcMotor.Direction.REVERSE);
+        BR.setDirection(DcMotor.Direction.FORWARD);
+        BL.setDirection(DcMotor.Direction.FORWARD);
+        VS.setDirection(DcMotor.Direction.FORWARD);
+        //this config is for the side to the left of the arm going forward.
+        // Need to change so that the arm is going forward
+        //either ac opposite of bd opposite
+
+
+
+        // Wait for the game to start (driver presses PLAY)
+        waitForStart();
+
+
+        LC.setPosition(0);
+        RC.setPosition(0);
+
+        // run until the end of the match (driver presses STOP)
+        while (opModeIsActive()) {
+
+            // scale factor (maybe change values. Experimentation
+            double scale_factor = 0.6;
+
+            // base of motor power
+            double motor_power_base = gamepad1.left_stick_y;
+
+            // differentiating between ac and bd motors (strafing code)
+            double a_BR_power_base = motor_power_base + gamepad1.left_stick_x;
+            double b_BL_power_base = motor_power_base - gamepad1.left_stick_x;
+
+            // setting the actual powers
+            double FL_power = a_BR_power_base - gamepad1.right_stick_x;
+            double FR_power = b_BL_power_base - gamepad1.right_stick_x;
+            double BR_power = a_BR_power_base + gamepad1.right_stick_x;
+            double BL_power = b_BL_power_base + gamepad1.right_stick_x;
+
+            // clip all the powers down to 1
+            FL_power    = Range.clip(FL_power*scale_factor, -1.0, 1.0);
+            FR_power    = Range.clip(FR_power*scale_factor, -1.0, 1.0);
+            BR_power    = Range.clip(BR_power*scale_factor, -1.0, 1.0);
+            BL_power    = Range.clip(BL_power*scale_factor, -1.0, 1.0);
+
+            // set the motor powers
+            FL.setPower(FL_power);
+            FR.setPower(FR_power);
+            BR.setPower(BR_power);
+            BL.setPower(BL_power);
+
+
+            if (gamepad2.y) {
+
+                VS.setTargetPosition(3850);
+
+            } else if (gamepad2.a) {
+
+                VS.setTargetPosition(0);
+
+            } else if (gamepad2.x) {
+
+                VS.setTargetPosition(3850/3);
+
+            } else if (gamepad2.b) {
+
+                VS.setTargetPosition(3850*2/3);
+
+            }
+
+            /*
+            // raises the arm
+            if (gamepad2.dpad_up) {
+
+                VS.setPower(0.5);
+
+            } else if (gamepad2.dpad_down && VS.getCurrentPosition() > 0) {
+
+                VS.setPower(-0.5);
+
+            } else {
+
+                VS.setPower(0);
+
+            }
+            */
+
+            // closes the claw
+            if (gamepad2.right_trigger>0.8) {
+
+                RC.setPosition(1);
+                LC.setPosition(0);
+
+            } else if (gamepad2.left_trigger>0.8) {
+
+                RC.setPosition(0);
+                LC.setPosition(1);
+
+            }
+
+            telemetry.addData("Motor VS", VS.getCurrentPosition());
+            telemetry.update();
+
+
+
+        }
+    }
+
+}
