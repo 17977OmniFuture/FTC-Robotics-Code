@@ -30,7 +30,7 @@ public class P_P_DrivetrainMechanum extends LinearOpMode {
         // step (using the FTC Robot Controller app on the phone).
         FL  = hardwareMap.get(DcMotor.class, "FL");
         FR = hardwareMap.get(DcMotor.class, "FR");
-        BR  = hardwareMap.get(DcMotor.class, "BR");
+        BR = hardwareMap.get(DcMotor.class, "BR");
         BL = hardwareMap.get(DcMotor.class, "BL");
         VS = hardwareMap.get(DcMotor.class, "VS");
         LC = hardwareMap.get(Servo.class, "LC");
@@ -44,8 +44,8 @@ public class P_P_DrivetrainMechanum extends LinearOpMode {
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         VS.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //VS.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior);
-
+        VS.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        
 
         /*
         wheel diameter = ~3.5 in
@@ -83,8 +83,6 @@ public class P_P_DrivetrainMechanum extends LinearOpMode {
         waitForStart();
 
 
-        LC.setPosition(0);
-        RC.setPosition(0);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -110,7 +108,7 @@ public class P_P_DrivetrainMechanum extends LinearOpMode {
             FR_power    = Range.clip(FR_power*scale_factor, -1.0, 1.0);
             BR_power    = Range.clip(BR_power*scale_factor, -1.0, 1.0);
             BL_power    = Range.clip(BL_power*scale_factor, -1.0, 1.0);
-
+    
             //can't turn right
             // set the motor powers
             FL.setPower(FL_power);
@@ -157,15 +155,15 @@ public class P_P_DrivetrainMechanum extends LinearOpMode {
 
             }
             */
-
+            
 
             // closes the claw
-            if (gamepad2.right_trigger>0.8) {
+            if (gamepad2.right_bumper) {
 
                 RC.setPosition(1);
                 LC.setPosition(0);
 
-            } else if (gamepad2.left_trigger>0.8) {
+            } else if (gamepad2.left_bumper) {
 
                 RC.setPosition(0);
                 LC.setPosition(1);
