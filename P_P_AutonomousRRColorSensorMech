@@ -13,8 +13,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-@Autonomous(name = "AutonomousRRColorSensorMech", group = "AA")
-public class AutonomousRRColorSensorMech extends LinearOpMode {
+@Autonomous(name = "P_P_AutonomousColorSensorRR", group = "AA")
+public class P_P_AutonomousColorSensorRR extends LinearOpMode {
 
     //a = front right, b = back right, c = back left, d = front left
     private DcMotor FL = null;
@@ -22,7 +22,7 @@ public class AutonomousRRColorSensorMech extends LinearOpMode {
     private DcMotor BR = null;
     private DcMotor BL = null;
     private DcMotor VS = null;
-    private ColorSensor sleeve_reader = null;
+    //private ColorSensor sleeve_reader = null;
     private Servo LC = null;
     private Servo RC = null;
     private String dom_color = null;
@@ -43,9 +43,9 @@ public class AutonomousRRColorSensorMech extends LinearOpMode {
         BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //makes sure the motors know how far they need to turn
-        FL.setTargetPosition(Target);
+        FL.setTargetPosition(-1*Target);
         FR.setTargetPosition(Target);
-        BR.setTargetPosition(-1*Target);
+        BR.setTargetPosition(Target);
         BL.setTargetPosition(-1*Target);
 
         //sets the motors to run to a certain position
@@ -306,11 +306,11 @@ public class AutonomousRRColorSensorMech extends LinearOpMode {
 
     }
 
-    private void ArmExtend () {
+    private void ArmExtend (int pos) {
 
-        VS.setTargetPosition(1000);
+        VS.setTargetPosition(-1*pos);
         VS.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        VS.setPower(0.8);
+        VS.setPower(1);
 
 
 
@@ -325,7 +325,7 @@ public class AutonomousRRColorSensorMech extends LinearOpMode {
 
     private void Close () {
 
-        RC.setPosition(1);
+        RC.setPosition(0);
         LC.setPosition(0);
 
     }
@@ -351,8 +351,30 @@ public class AutonomousRRColorSensorMech extends LinearOpMode {
 
         waitForStart();
         Close();
-        MoveForwardDistance(1200, 1);
-        sleep(3000);
+        ArmExtend(8000);
+        sleep(2000);
+        MoveForwardDistance(2400, 0.8);
+        sleep(2750);
+        Turn(400,0.8);
+        sleep(1000);
+        MoveForwardDistance(200,0.8);
+        sleep(1000);
+        MoveForwardDistance(-400,0.8);
+        sleep(500);
+        Turn(-1150,1);
+        sleep(1000);
+        MoveForwardDistance(800,0.6);
+        sleep(1200);
+        Close();
+        sleep(500);
+        MoveForwardDistance(-800,1);
+        sleep(1000);
+        Turn(1200,0.5);
+        sleep(1000);
+        MoveForwardDistance(200,1);
+        sleep(200);
+
+
 
         if (sleeve_reader.red() > sleeve_reader.green() && sleeve_reader.red() > sleeve_reader.blue()) {
 
@@ -374,7 +396,7 @@ public class AutonomousRRColorSensorMech extends LinearOpMode {
         //1 is left
         //backwards code
         //put logic here
-        if (dom_color == "g") {
+        /*if (dom_color == "g") {
 
             ArmExtend();
             MoveForwardDistance(3000,1);
@@ -486,7 +508,7 @@ public class AutonomousRRColorSensorMech extends LinearOpMode {
             MoveForwardDistance(-2000,1);
             sleep(2000);
 
-        }
+        }*/
 
 
 
