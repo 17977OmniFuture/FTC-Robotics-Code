@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.
 
 @TeleOp(name="CSDriverTest", group="AA")
 public class CSDriverTest extends LinearOpMode{
@@ -18,7 +17,8 @@ public class CSDriverTest extends LinearOpMode{
     private DcMotor FR = null; //port 1
     private DcMotor BR = null; //port 2
     private DcMotor BL = null; //port 3
-    private DcMotor BigArm = null; //port 4
+    private DcMotor VS = null; 
+    private DcMotor WG = null; 
 
     private DcMotor leftEncoder = null;
     private DcMotor rightEncoder = null;
@@ -27,7 +27,7 @@ public class CSDriverTest extends LinearOpMode{
     //constants which define the geometry of the robot and how this translates into movement
     final static double L = 23.02; //length between the two aligned encoders, in cm
     final static double B = 24.13; //length between the midpoint of aligned encoders and third encoder
-    final static double R = 1.75; //wheel radius, in cm
+    final static double R = 4.8; //wheel radius, in cm
     final static double N = 8192; //encoder ticks per revolution, REV encoder
     final static double cm_per_tick = 2 * Math.PI * R / N;
 
@@ -38,10 +38,6 @@ public class CSDriverTest extends LinearOpMode{
     private int oldLeftPos = 0;
     private int oldRightPos = 0;
     private int oldHeadPos = 0;
-    private int relativeLeftPos = 0;
-    private int relativeRightPos = 0;
-    private int relativeHeadPos = 0;
-
 
     //note, in a mechanum drivetrain, you will frequently need to
     //make use of wheels that are ACROSS the robot from one another
@@ -51,77 +47,11 @@ public class CSDriverTest extends LinearOpMode{
     //the vv actual beginning of the OpMode (program that runs) is
     //where you put the functions you want to use in the code (ie)
     //claw function or drive function
-    // target pos - vector3         start pos - vector3
 
+    //public XyhVector START_POS = new XyhVector(213,102,Math.toRadians(-174));
+    //public XyhVector pos = new XyhVector(START_POS);
 
-    /*
-    currentLeftPos, RightPos, HeadPos
-    odometry(tXP, tYP, tHP) {
-
-        //if too close to a wall get further away
-        basically
-
-        find the relative position of the target point
-        tXP - cXP = rXP;
-        tYP - cYP = rYP;
-        CurAng = headingEncoder.getCurrentPosition();
-
-
-        //I HAVE SIMPLIFIED THE FOLLOWING CODE, REMOVING THE 2PIR FROM THE FIRST AND SECOND EQUATIONS
-        //IN THE FIRST EQUATION, IT IS IN THE NUMERATOR, IN THE SECOND IT IS IN THE DENOMINATOR
-        //THIS MEANS IT SHOULD CANCEL OUT AND BE THE SAME. PLEASE
-        //CurAng/N = number of revolutions. Times 2piR (the circumference of the odometry wheels) gives us linear distance
-        CurAng = CurAng / N;
-        //linear distance/circumference of the circle formed by the three encoders gives us number of robot rotations
-        CurAng = CurAng/ L;
-        //Turn the number of rotations into degrees
-        CurAng = CurAng * 360;
-
-        distance = Math.sqrt(rXP*rXP + rYP+rYP);
-        if (rYP < 0) {
-
-            TarAng = Math.acos(rXP/distance);
-            TarAng = TarAng*180/Math.Pi();
-
-        } else {
-
-            TarAng = Math.acos(rXP/distance)-Math.Pi();
-            TarAng = TarAng*180/Math.Pi();
-
-        }
-
-        //turning from degrees into relative to robot rotations
-        //then turn from robot rotations into cm
-        TarAng = TarAng/360;
-        TarAng = TarAng * 72.26;
-        //then cm into encoder wheel rotations
-        //then rotations to number of ticks
-        TarAng = TarAng/R;
-        TarAng = TarAng*N;
-        //^ this may be a negative number, while the motor will always track positive ones
-        //thus i probably need to use absolute value and change directions on the wheel
-        //like turn one way have things left, turn one way have things right ez
-
-        //need to test if wheel read positive both ways?
-
-
-
-        //circumference of circle of the encoders = 23pi cm = 72.26 cm
-
-
-
-
-    }
-
-
-
-     */
-
-
-    /*public XyhVector START_POS = new XyhVector(213,102,Math.toRadians(-174));
-    public XyhVector pos = new XyhVector(START_POS);
-
-    public void odometry () {
+    /*public void odometry () {
 
         oldLeftPos = currentLeftPos;
         oldRightPos = currentRightPos;
@@ -154,24 +84,27 @@ public class CSDriverTest extends LinearOpMode{
         FR = hardwareMap.get(DcMotor.class, "FR");
         BR = hardwareMap.get(DcMotor.class, "BR");
         BL = hardwareMap.get(DcMotor.class, "BL");
-        BigArm = hardwareMap.get(DcMotor.class "BigArm");
-
+        VS = hardwareMap.get(DcMotor.class, "VS");
+        WG = hardwareMap.get(DcMotor.class, "WG");
+        
         FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BigArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        VS.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        WG.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FL.setDirection(DcMotor.Direction.FORWARD);
         FR.setDirection(DcMotor.Direction.REVERSE);
         BR.setDirection(DcMotor.Direction.FORWARD);
         BL.setDirection(DcMotor.Direction.REVERSE);
-        BigArm.setDirection(DcMotor.Direction.REVERSE);
+        VS.setDirection(DcMotor.Direction.FORWARD);
+        WG.setDirection(DcMotor.Direction.FORWARD);
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BigArm.setDirection(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        VS.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        WG.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
 
@@ -192,14 +125,14 @@ public class CSDriverTest extends LinearOpMode{
             double motor_power_base = gamepad1.left_stick_y;
 
             // differentiating between ac and bd motors (strafing code)
-            double a_BR_power_base = motor_power_base - gamepad1.left_stick_x;
-            double b_BL_power_base = motor_power_base + gamepad1.left_stick_x;
+            double a_BR_power_base = motor_power_base - gamepad1.right_stick_x;
+            double b_BL_power_base = motor_power_base + gamepad1.right_stick_x;
 
             // setting the actual powers (turning code) - to make unable to turn right, remove the minuses
-            double FL_power = a_BR_power_base - gamepad1.right_stick_x;
-            double FR_power = b_BL_power_base + gamepad1.right_stick_x;
-            double BR_power = a_BR_power_base + gamepad1.right_stick_x;
-            double BL_power = b_BL_power_base - gamepad1.right_stick_x;
+            double FL_power = a_BR_power_base - gamepad1.left_stick_x;
+            double FR_power = b_BL_power_base + gamepad1.left_stick_x;
+            double BR_power = a_BR_power_base + gamepad1.left_stick_x;
+            double BL_power = b_BL_power_base - gamepad1.left_stick_x;
 
             // clip all the powers down to 1
             FL_power = Range.clip(FL_power * scale_factor, -1.0, 1.0);
@@ -207,20 +140,6 @@ public class CSDriverTest extends LinearOpMode{
             BR_power = Range.clip(BR_power * scale_factor, -1.0, 1.0);
             BL_power = Range.clip(BL_power * scale_factor, -1.0, 1.0);
 
-            //arm
-            if (gamepad1.a) {
-
-                BigArm.setPower(1);
-
-            } else if (gamepad1.x) {
-
-                BigArm.setPower(-1);
-
-            } else {
-
-                BigArm.setPower(0);
-
-            }
 
             // set the motor powers
             FL.setPower(FL_power);
@@ -228,13 +147,14 @@ public class CSDriverTest extends LinearOpMode{
             BR.setPower(BR_power);
             BL.setPower(BL_power);
 
+            WG.setPower(gamepad2.left_stick_y);
+
+
+
             telemetry.addData("Motor 0 Odometry:", FR.getCurrentPosition());
             telemetry.addData("Motor 1 Odometry:", FL.getCurrentPosition());
             telemetry.addData("Motor 2 Odometry:", BR.getCurrentPosition());
             telemetry.update();
-
-
-
 
         }
 
