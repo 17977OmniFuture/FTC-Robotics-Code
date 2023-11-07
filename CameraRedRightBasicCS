@@ -307,11 +307,6 @@ public class CameraRedRightBasicCS extends LinearOpMode {
                 // Push telemetry to the Driver Station.
                 telemetry.update();
 
-                MoveForwardDistance(400,0.3);
-                wait(500);
-                Strafe(6000,0.3,1);
-                wait(300000);
-
 
 
 
@@ -320,9 +315,7 @@ public class CameraRedRightBasicCS extends LinearOpMode {
                 //move forward and drop object
                 //wait
                 List<Recognition> currentRecognitions = tfod.getRecognitions();
-                telemetry.addData("# Objects Detected", currentRecognitions.size());
                 sleep(1000);
-
 
 
                 if (currentRecognitions.size()>0) {
