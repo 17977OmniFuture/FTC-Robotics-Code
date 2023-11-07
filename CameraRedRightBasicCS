@@ -320,15 +320,15 @@ public class CameraRedRightBasicCS extends LinearOpMode {
 
                 if (currentRecognitions.size()>0) {
 
-                    MoveForwardDistance(2500,0.4);
+                    MoveForwardDistance(2200,0.4);
                     sleep(4000);
-                    Turn(-1200,-0.3);
+                    Turn(-900,-0.3);
                     sleep(3000);
-                    MoveForwardDistance(-1000,0.4);
+                    MoveForwardDistance(-900,0.4);
                     sleep(2000);
-                    Turn(2400,0.3);
+                    Turn(1800,0.3);
                     sleep(6000);
-                    MoveForwardDistance(3000,0.3);
+                    MoveForwardDistance(2200,0.3);
                     sleep(30000);
 
 
@@ -343,9 +343,9 @@ public class CameraRedRightBasicCS extends LinearOpMode {
 
                     MoveForwardDistance(3000,0.4);
                     sleep(4000);
-                    MoveForwardDistance(-1000,0.4);
+                    MoveForwardDistance(-900,0.4);
                     sleep(2000);
-                    Turn(1200,0.3);
+                    Turn(900,0.3);
                     sleep(3000);
                     MoveForwardDistance(3000,0.3);
                     sleep(30000);
@@ -359,18 +359,15 @@ public class CameraRedRightBasicCS extends LinearOpMode {
 
                 if (currentRecognitions.size()>0) {
 
-                    MoveForwardDistance(2500,0.4);
+                    MoveForwardDistance(2200,0.4);
                     sleep(4000);
-                    Turn(1200,-0.3);
-                    sleep(3000);
-                    MoveForwardDistance(-1000,0.4);
+                    Turn(300,0.3);
+                    sleep(1500);
+                    MoveForwardDistance(-900,0.4);
                     sleep(2000);
-                    Turn(1200,0.3);
-                    sleep(6000);
-                    MoveForwardDistance(1000,0.3);
-                    sleep(2000);
-                    Turn(-2400,-0.3);
-                    MoveForwardDistance(2000,0.3);
+                    Turn(600,0.3);
+                    sleep(1500);
+                    MoveForwardDistance(3000,0.3);
                     sleep(30000);
 
 
