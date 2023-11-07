@@ -17,8 +17,8 @@ public class CSDriverTest extends LinearOpMode{
     private DcMotor FR = null; //port 1
     private DcMotor BR = null; //port 2
     private DcMotor BL = null; //port 3
-    private DcMotor VS = null; 
-    private DcMotor WG = null; 
+    private DcMotor VS = null;
+    private DcMotor WG = null;
 
     private DcMotor leftEncoder = null;
     private DcMotor rightEncoder = null;
@@ -79,26 +79,33 @@ public class CSDriverTest extends LinearOpMode{
     @Override
     public void runOpMode() {
 
-
+        //define the motors
         FL = hardwareMap.get(DcMotor.class, "FL");
         FR = hardwareMap.get(DcMotor.class, "FR");
         BR = hardwareMap.get(DcMotor.class, "BR");
         BL = hardwareMap.get(DcMotor.class, "BL");
         VS = hardwareMap.get(DcMotor.class, "VS");
         WG = hardwareMap.get(DcMotor.class, "WG");
-        
+
+        //tell the motors to read their encoders
         FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         VS.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         WG.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //tell the motors to run backward or forward depending on what makes
+        // it easiest to drive (different for different drive trains)
         FL.setDirection(DcMotor.Direction.FORWARD);
         FR.setDirection(DcMotor.Direction.REVERSE);
         BR.setDirection(DcMotor.Direction.FORWARD);
         BL.setDirection(DcMotor.Direction.REVERSE);
         VS.setDirection(DcMotor.Direction.FORWARD);
         WG.setDirection(DcMotor.Direction.FORWARD);
+
+        //tell the motors to brake when not being told to move (the robot
+        //will no longer coast
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -142,11 +149,12 @@ public class CSDriverTest extends LinearOpMode{
 
 
             // set the motor powers
-            FL.setPower(FL_power);
-            FR.setPower(FR_power);
-            BR.setPower(BR_power);
-            BL.setPower(BL_power);
+            FL.setPower(-1*FL_power);
+            FR.setPower(-1*FR_power);
+            BR.setPower(-1*BR_power);
+            BL.setPower(-1*BL_power);
 
+            VS.setPower(gamepad2.right_stick_y);
             WG.setPower(gamepad2.left_stick_y);
 
 
