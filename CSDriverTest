@@ -24,6 +24,19 @@ public class CSDriverTest extends LinearOpMode{
     private DcMotor rightEncoder = null;
     private DcMotor headingEncoder = null;
 
+    // scale factor (maybe change values. Experimentation
+    double drivetrain_scale_factor = 0.55;
+
+    //just setting things to give base values (doesn't mean anything)
+    double motor_power_base = 1;
+    double a_BR_power_base = 1;
+    double b_BL_power_base = 1;
+    double FL_power = 1;
+    double FR_power = 1;
+    double BR_power = 1;
+    double BL_power = 1;
+    double VS_power = 1;
+
     //constants which define the geometry of the robot and how this translates into movement
     final static double L = 23.02; //length between the two aligned encoders, in cm
     final static double B = 24.13; //length between the midpoint of aligned encoders and third encoder
@@ -125,27 +138,25 @@ public class CSDriverTest extends LinearOpMode{
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            // scale factor (maybe change values. Experimentation
-            double scale_factor = 0.55;
 
             // base of motor power
-            double motor_power_base = gamepad1.left_stick_y;
+            motor_power_base = gamepad1.left_stick_y;
 
             // differentiating between ac and bd motors (strafing code)
-            double a_BR_power_base = motor_power_base - gamepad1.right_stick_x;
-            double b_BL_power_base = motor_power_base + gamepad1.right_stick_x;
+            a_BR_power_base = motor_power_base - gamepad1.right_stick_x;
+            b_BL_power_base = motor_power_base + gamepad1.right_stick_x;
 
             // setting the actual powers (turning code) - to make unable to turn right, remove the minuses
-            double FL_power = a_BR_power_base - gamepad1.left_stick_x;
-            double FR_power = b_BL_power_base + gamepad1.left_stick_x;
-            double BR_power = a_BR_power_base + gamepad1.left_stick_x;
-            double BL_power = b_BL_power_base - gamepad1.left_stick_x;
+            FL_power = a_BR_power_base - gamepad1.left_stick_x;
+            FR_power = b_BL_power_base + gamepad1.left_stick_x;
+            BR_power = a_BR_power_base + gamepad1.left_stick_x;
+            BL_power = b_BL_power_base - gamepad1.left_stick_x;
 
             // clip all the powers down to 1
-            FL_power = Range.clip(FL_power * scale_factor, -1.0, 1.0);
-            FR_power = Range.clip(FR_power * scale_factor, -1.0, 1.0);
-            BR_power = Range.clip(BR_power * scale_factor, -1.0, 1.0);
-            BL_power = Range.clip(BL_power * scale_factor, -1.0, 1.0);
+            FL_power = Range.clip(FL_power * drivetrain_scale_factor, -1.0, 1.0);
+            FR_power = Range.clip(FR_power * drivetrain_scale_factor, -1.0, 1.0);
+            BR_power = Range.clip(BR_power * drivetrain_scale_factor, -1.0, 1.0);
+            BL_power = Range.clip(BL_power * drivetrain_scale_factor, -1.0, 1.0);
 
 
             // set the motor powers
@@ -154,8 +165,19 @@ public class CSDriverTest extends LinearOpMode{
             BR.setPower(-1*BR_power);
             BL.setPower(-1*BL_power);
 
-            VS.setPower(gamepad2.right_stick_y);
-            WG.setPower(gamepad2.left_stick_y);
+            VS_power = gamepad2.right_stick_y*0.8;
+
+            if (VS.getCurrentPosition()<80) {
+
+                VS_power = Range.clip(VS_power, 0,1);
+
+            }
+
+            VS.setPower(VS_power);
+            telemetry.addData("Position of arm: ", VS.getCurrentPosition());
+
+
+            WG.setPower(-1*gamepad2.left_stick_y);
 
 
 
