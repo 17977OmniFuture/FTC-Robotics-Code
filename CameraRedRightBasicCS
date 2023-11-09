@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -59,6 +60,7 @@ public class CameraRedRightBasicCS extends LinearOpMode {
     private DcMotor BL = null; //port 3
     private DcMotor VS = null;
     private DcMotor WG = null;
+    private Servo CS = null;
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -83,6 +85,204 @@ public class CameraRedRightBasicCS extends LinearOpMode {
      */
     private VisionPortal visionPortal;
 
+    private void MoveForwardDistance (int Target, double Power) {
+
+        //makes sure the motors go the right way
+        FL.setDirection(DcMotor.Direction.FORWARD);
+        FR.setDirection(DcMotor.Direction.REVERSE);
+        BR.setDirection(DcMotor.Direction.FORWARD);
+        BL.setDirection(DcMotor.Direction.REVERSE);
+
+        //sets the motor positions to zero so they can measure how far they travel
+        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //makes sure the motors know how far they need to turn
+        FL.setTargetPosition(Target);
+        FR.setTargetPosition(Target);
+        BR.setTargetPosition(Target);
+        BL.setTargetPosition(Target);
+
+        //sets the motors to run to a certain position
+        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+        if (Target >= 0) {
+
+            while (!(FL.getCurrentPosition() <= Target - 10)) {
+
+                FL.setPower(Power);
+                FR.setPower(Power);
+                BR.setPower(Power);
+                BL.setPower(Power);
+
+            }
+
+        } else {
+
+            while (!(FL.getCurrentPosition() <= -1*Target - 10)) {
+
+                FL.setPower(Power);
+                FR.setPower(Power);
+                BR.setPower(Power);
+                BL.setPower(Power);
+
+            }
+
+        }
+
+        //power motors
+        FL.setPower(Power);
+        FR.setPower(Power);
+        BR.setPower(Power);
+        BL.setPower(Power);
+
+
+    }
+
+    //when target is negative, make sure power is negative !!!! - negative means left
+    private void Turn (int Target, double Power) {
+
+        //makes sure the motors go the right way
+        FL.setDirection(DcMotor.Direction.FORWARD);
+        FR.setDirection(DcMotor.Direction.FORWARD);
+        BR.setDirection(DcMotor.Direction.FORWARD);
+        BL.setDirection(DcMotor.Direction.FORWARD);
+
+        //sets the motor positions to zero so they can measure how far they travel
+        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //makes sure the motors know how far they need to turn
+        FL.setTargetPosition(Target);
+        FR.setTargetPosition(Target);
+        BR.setTargetPosition(Target);
+        BL.setTargetPosition(Target);
+
+        //sets the motors to run to a certain position
+        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+        if (Target >= 0) {
+
+            while (!(FL.getCurrentPosition() <= Target - 10)) {
+
+                FL.setPower(Power);
+                FR.setPower(Power);
+                BR.setPower(Power);
+                BL.setPower(Power);
+
+            }
+
+        } else {
+
+            while (!(FL.getCurrentPosition() <= -1*Target - 10)) {
+
+                FL.setPower(Power);
+                FR.setPower(Power);
+                BR.setPower(Power);
+                BL.setPower(Power);
+
+            }
+
+        }
+
+        //power motors
+        FL.setPower(Power);
+        FR.setPower(Power);
+        BR.setPower(Power);
+        BL.setPower(Power);
+
+
+    }
+
+    //heading uses set values, 0 = left, 1 = right, anything else is backwards
+    private void Strafe (int Target, double Power, int direction) {
+
+        //makes sure the motors go the right way
+        FL.setDirection(DcMotor.Direction.FORWARD);
+        FR.setDirection(DcMotor.Direction.FORWARD);
+        BR.setDirection(DcMotor.Direction.FORWARD);
+        BL.setDirection(DcMotor.Direction.FORWARD);
+
+        //sets the motor positions to zero so they can measure how far they travel
+        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        if (direction == 0) {
+
+            //left
+            FL.setTargetPosition(Target);
+            FR.setTargetPosition(-1*Target);
+            BR.setTargetPosition(-1*Target);
+            BL.setTargetPosition(Target);
+
+
+        } else if (direction == 1) {
+
+            //right
+            FL.setTargetPosition(-1*Target);
+            FR.setTargetPosition(Target);
+            BR.setTargetPosition(Target);
+            BL.setTargetPosition(-1*Target);
+
+        } else {
+
+            //back
+            FL.setTargetPosition(-1*Target);
+            FR.setTargetPosition(-1*Target);
+            BR.setTargetPosition(Target);
+            BL.setTargetPosition(Target);
+
+        }
+
+        //sets the motors to run to a certain position
+        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        if (Target >= 0) {
+
+            while (!(FL.getCurrentPosition() <= Target - 10)) {
+
+                FL.setPower(Power);
+                FR.setPower(Power);
+                BR.setPower(Power);
+                BL.setPower(Power);
+
+            }
+
+        } else {
+
+            while (!(FL.getCurrentPosition() <= -1*Target - 10)) {
+
+                FL.setPower(Power);
+                FR.setPower(Power);
+                BR.setPower(Power);
+                BL.setPower(Power);
+
+            }
+
+        }
+
+
+
+    }
+
     @Override
     public void runOpMode() {
 
@@ -94,204 +294,7 @@ public class CameraRedRightBasicCS extends LinearOpMode {
         BL = hardwareMap.get(DcMotor.class, "BL");
         VS = hardwareMap.get(DcMotor.class, "VS");
         WG = hardwareMap.get(DcMotor.class, "WG");
-
-        private void MoveForwardDistance (int Target, double Power) {
-
-            //makes sure the motors go the right way
-            FL.setDirection(DcMotor.Direction.FORWARD);
-            FR.setDirection(DcMotor.Direction.FORWARD);
-            BR.setDirection(DcMotor.Direction.FORWARD);
-            BL.setDirection(DcMotor.Direction.FORWARD);
-
-            //sets the motor positions to zero so they can measure how far they travel
-            FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-            //makes sure the motors know how far they need to turn
-            FL.setTargetPosition(-1*Target);
-            FR.setTargetPosition(Target);
-            BR.setTargetPosition(Target);
-            BL.setTargetPosition(-1*Target);
-
-            //sets the motors to run to a certain position
-            FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
-            if (Target >= 0) {
-
-                while (!(FL.getCurrentPosition() <= Target - 10)) {
-
-                    FL.setPower(Power);
-                    FR.setPower(Power);
-                    BR.setPower(Power);
-                    BL.setPower(Power);
-
-                }
-
-            } else {
-
-                while (!(FL.getCurrentPosition() <= -1*Target - 10)) {
-
-                    FL.setPower(Power);
-                    FR.setPower(Power);
-                    BR.setPower(Power);
-                    BL.setPower(Power);
-
-                }
-
-            }
-
-            //power motors
-            FL.setPower(Power);
-            FR.setPower(Power);
-            BR.setPower(Power);
-            BL.setPower(Power);
-
-
-        }
-
-        //when target is negative, make sure power is negative !!!! - negative means left
-        private void Turn (int Target, double Power) {
-
-            //makes sure the motors go the right way
-            FL.setDirection(DcMotor.Direction.FORWARD);
-            FR.setDirection(DcMotor.Direction.FORWARD);
-            BR.setDirection(DcMotor.Direction.FORWARD);
-            BL.setDirection(DcMotor.Direction.FORWARD);
-
-            //sets the motor positions to zero so they can measure how far they travel
-            FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-            //makes sure the motors know how far they need to turn
-            FL.setTargetPosition(Target);
-            FR.setTargetPosition(Target);
-            BR.setTargetPosition(Target);
-            BL.setTargetPosition(Target);
-
-            //sets the motors to run to a certain position
-            FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
-            if (Target >= 0) {
-
-                while (!(FL.getCurrentPosition() <= Target - 10)) {
-
-                    FL.setPower(Power);
-                    FR.setPower(Power);
-                    BR.setPower(Power);
-                    BL.setPower(Power);
-
-                }
-
-            } else {
-
-                while (!(FL.getCurrentPosition() <= -1*Target - 10)) {
-
-                    FL.setPower(Power);
-                    FR.setPower(Power);
-                    BR.setPower(Power);
-                    BL.setPower(Power);
-
-                }
-
-            }
-
-            //power motors
-            FL.setPower(Power);
-            FR.setPower(Power);
-            BR.setPower(Power);
-            BL.setPower(Power);
-
-
-        }
-
-        //heading uses set values, 0 = left, 1 = right, anything else is backwards
-        private void Strafe (int Target, double Power, int direction) {
-
-            //makes sure the motors go the right way
-            FL.setDirection(DcMotor.Direction.FORWARD);
-            FR.setDirection(DcMotor.Direction.FORWARD);
-            BR.setDirection(DcMotor.Direction.FORWARD);
-            BL.setDirection(DcMotor.Direction.FORWARD);
-
-            //sets the motor positions to zero so they can measure how far they travel
-            FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
-            if (direction == 0) {
-
-                //left
-                FL.setTargetPosition(Target);
-                FR.setTargetPosition(-1*Target);
-                BR.setTargetPosition(-1*Target);
-                BL.setTargetPosition(Target);
-
-
-            } else if (direction == 1) {
-
-                //right
-                FL.setTargetPosition(-1*Target);
-                FR.setTargetPosition(Target);
-                BR.setTargetPosition(Target);
-                BL.setTargetPosition(-1*Target);
-
-            } else {
-
-                //back
-                FL.setTargetPosition(-1*Target);
-                FR.setTargetPosition(-1*Target);
-                BR.setTargetPosition(Target);
-                BL.setTargetPosition(Target);
-
-            }
-
-            //sets the motors to run to a certain position
-            FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            if (Target >= 0) {
-
-                while (!(FL.getCurrentPosition() <= Target - 10)) {
-
-                    FL.setPower(Power);
-                    FR.setPower(Power);
-                    BR.setPower(Power);
-                    BL.setPower(Power);
-
-                }
-
-            } else {
-
-                while (!(FL.getCurrentPosition() <= -1*Target - 10)) {
-
-                    FL.setPower(Power);
-                    FR.setPower(Power);
-                    BR.setPower(Power);
-                    BL.setPower(Power);
-
-                }
-
-            }
-
-
-
-        }
+        CS = hardwareMap.get(Servo.class,   "CS");
 
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -300,90 +303,91 @@ public class CameraRedRightBasicCS extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            while (opModeIsActive()) {
 
-                telemetryTfod();
+            //if it sees an object
+            //move forward and drop object
+            //wait
+            CS.setPosition(0.42);
+            MoveForwardDistance(400,0.3);
+            sleep(1000);
+            List<Recognition> currentRecognitions = tfod.getUpdatedRecognitions();
+            sleep(1000);
 
-                // Push telemetry to the Driver Station.
+
+            if (currentRecognitions.size()>0) {
+
+                telemetry.addData("Recognized 1!", CS.getPosition());
                 telemetry.update();
+                MoveForwardDistance(2500,0.4);
+                sleep(4000);
+                Turn(1200,0.3);
+                sleep(3000);
+                MoveForwardDistance(-1000,-0.4);
+                sleep(2000);
+                Turn(2400,0.3);
+                sleep(6000);
+                MoveForwardDistance(3000,0.3);
+                sleep(30000);
 
-
-
-
-
-                //if it sees an object
-                //move forward and drop object
-                //wait
-                List<Recognition> currentRecognitions = tfod.getRecognitions();
-                sleep(1000);
-
-
-                if (currentRecognitions.size()>0) {
-
-                    MoveForwardDistance(2200,0.4);
-                    sleep(4000);
-                    Turn(-900,-0.3);
-                    sleep(3000);
-                    MoveForwardDistance(-900,0.4);
-                    sleep(2000);
-                    Turn(1800,0.3);
-                    sleep(6000);
-                    MoveForwardDistance(2200,0.3);
-                    sleep(30000);
-
-
-                }
-
-                //move cam servo to look at next position
-                sleep(1000);
-                currentRecognitions = tfod.getRecognitions();
-                sleep(1000);
-
-                if (currentRecognitions.size()>0) {
-
-                    MoveForwardDistance(3000,0.4);
-                    sleep(4000);
-                    MoveForwardDistance(-900,0.4);
-                    sleep(2000);
-                    Turn(900,0.3);
-                    sleep(3000);
-                    MoveForwardDistance(3000,0.3);
-                    sleep(30000);
-
-
-                }
-
-                sleep(1000);
-                currentRecognitions = tfod.getRecognitions();
-                sleep(1000);
-
-                if (currentRecognitions.size()>0) {
-
-                    MoveForwardDistance(2200,0.4);
-                    sleep(4000);
-                    Turn(300,0.3);
-                    sleep(1500);
-                    MoveForwardDistance(-900,0.4);
-                    sleep(2000);
-                    Turn(600,0.3);
-                    sleep(1500);
-                    MoveForwardDistance(3000,0.3);
-                    sleep(30000);
-
-
-                }
-
-                //move forward, strafe
-                //if it sees an object
-                //move forward and drop object
-                //wait
-
-                //strafe/movebackward(?)
-                //drop object
-
-                // Share the CPU.
-                sleep(20);
             }
+            /*
+            //move cam servo to look at next position
+            MoveForwardDistance(200,0.3);
+            CS.setPosition(0.56);
+            sleep(1500);
+            currentRecognitions = tfod.getRecognitions();
+            sleep(100);
+            currentRecognitions = tfod.getRecognitions();
+            sleep(100);
+            currentRecognitions = tfod.getRecognitions();
+            sleep(100);
+            currentRecognitions = tfod.getRecognitions();
+            sleep(700);
+
+            if (currentRecognitions.size()>0) {
+
+                telemetry.addData("Recognized 2!", CS.getPosition());
+                telemetry.update();
+                MoveForwardDistance(3000, 0.4);
+                sleep(4000);
+                MoveForwardDistance(-1000, 0.4);
+                sleep(2000);
+                Turn(1200, 0.3);
+                sleep(3000);
+                MoveForwardDistance(3000, 0.3);
+                sleep(30000);
+
+            } else {
+
+                telemetry.addData("Recognized 3!", CS.getPosition());
+                telemetry.update();
+                MoveForwardDistance(800,0.4);
+                sleep(4000);
+                Turn(1200,0.3);
+                sleep(3000);
+                MoveForwardDistance(-1000,0.4);
+                sleep(2000);
+                Turn(1200,0.3);
+                sleep(6000);
+                MoveForwardDistance(1000,0.3);
+                sleep(2000);
+                Turn(-2400,-0.3);
+                MoveForwardDistance(2000,0.3);
+                sleep(30000);
+
+            }
+            */
+
+            //move forward, strafe
+            //if it sees an object
+            //move forward and drop object
+            //wait
+
+            //strafe/movebackward(?)
+            //drop object
+
+            // Share the CPU.
+            sleep(20);
         }
 
         // Save more CPU resources when camera is no longer needed.
@@ -413,7 +417,7 @@ public class CameraRedRightBasicCS extends LinearOpMode {
                 //.setIsModelTensorFlow2(true)
                 //.setIsModelQuantized(true)
                 //.setModelInputSize(300)
-                //.setModelAspectRatio(16.0 / 9.0)
+                .setModelAspectRatio(12.0 / 9.0)
 
                 .build();
 
