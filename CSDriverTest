@@ -100,7 +100,13 @@ public class CSDriverTest extends LinearOpMode{
         VS = hardwareMap.get(DcMotor.class, "VS");
         WG = hardwareMap.get(DcMotor.class, "WG");
 
-        //tell the motors to read their encoders
+        //tell the motors to read their encoders (and reset each one)
+        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        VS.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        WG.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -167,10 +173,18 @@ public class CSDriverTest extends LinearOpMode{
 
             VS_power = gamepad2.right_stick_y*0.8;
 
-            if (VS.getCurrentPosition()<80) {
+            if (VS.getCurrentPosition()>-100) {
 
+                VS_power = Range.clip(VS_power, -1,0);
+
+            } else if (VS.getCurrentPosition()>-2200) {
+                
+                VS_power = Range.clip(VS_power, -1,1);
+                
+            } else {
+                
                 VS_power = Range.clip(VS_power, 0,1);
-
+                
             }
 
             VS.setPower(VS_power);
@@ -178,7 +192,13 @@ public class CSDriverTest extends LinearOpMode{
 
 
             WG.setPower(-1*gamepad2.left_stick_y);
-
+            
+            if (WG.getCurrentPosition()<60) {
+                
+                VS_power = Range.clip(VS_power, 0,1);
+                
+            }
+            
 
 
             telemetry.addData("Motor 0 Odometry:", FR.getCurrentPosition());
