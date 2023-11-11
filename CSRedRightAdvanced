@@ -64,8 +64,8 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 
-@Autonomous(name="CameraRedRightAdvancedCS")
-public class CameraRedRightAdvancedCS extends LinearOpMode {
+@Autonomous(name="CSRedRightAdvanced")
+public class CSRedRightAdvanced extends LinearOpMode {
     private DcMotor FL = null; //port 0
     private DcMotor FR = null; //port 1
     private DcMotor BR = null; //port 2
