@@ -359,10 +359,10 @@ public class CameraBlueLeftAdvancedCS extends LinearOpMode {
                 sleep(1000);
                 MoveForwardDistance(400,0.6);
                 sleep(800);
-                RaiseArm(100);
+                RaiseArm(150);
                 sleep(1200);
                 MoveForwardDistance(-1200,0.6);
-                RaiseArm(10);
+                RaiseArm(50);
                 sleep(1800);
                 Turn(700,0.3);
                 sleep(1000);
@@ -394,10 +394,10 @@ public class CameraBlueLeftAdvancedCS extends LinearOpMode {
                     telemetry.update();
                     MoveForwardDistance(670, 0.4);
                     sleep(2000);
-                    RaiseArm(100);
+                    RaiseArm(150);
                     sleep(700);
                     MoveForwardDistance(-500,0.6);
-                    RaiseArm(20);
+                    RaiseArm(50);
                     sleep(1800);
                     Turn(1000, 0.3);
                     sleep(3000);
@@ -416,10 +416,10 @@ public class CameraBlueLeftAdvancedCS extends LinearOpMode {
                     Turn(-600,-0.3);
                     sleep(1500);
                     MoveForwardDistance(650,0.3);
-                    RaiseArm(80);
+                    RaiseArm(150);
                     sleep(1200);
                     MoveForwardDistance(-1200,0.6);
-                    RaiseArm(20);
+                    RaiseArm(50);
                     sleep(1500);
                     Turn(1650,0.3);
                     sleep(3000);
