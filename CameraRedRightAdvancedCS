@@ -373,7 +373,8 @@ public class CameraRedRightAdvancedCS extends LinearOpMode {
                 sleep(4000);
                 MoveForwardDistance(1200,0.3);
                 sleep(3500);
-                RaiseArm(0);
+                RaiseArm(-20);
+                sleep(3000);
                 Strafe(1300,0.7,1);
                 sleep(30000);
 
@@ -408,7 +409,8 @@ public class CameraRedRightAdvancedCS extends LinearOpMode {
                     sleep(3000);
                     MoveForwardDistance(1200, 0.3);
                     sleep(2000);
-                    RaiseArm(0);
+                    RaiseArm(-20);
+                    sleep(3000);
                     Strafe(1300,0.7,1);
                     sleep(30000);
 
