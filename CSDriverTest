@@ -19,13 +19,17 @@ public class CSDriverTest extends LinearOpMode{
     private DcMotor BL = null; //port 3
     private DcMotor VS = null;
     private DcMotor WG = null;
+    private Servo launch = null;
+    private Servo PP = null;
+    private Servo CS = null;
 
     private DcMotor leftEncoder = null;
     private DcMotor rightEncoder = null;
     private DcMotor headingEncoder = null;
 
     // scale factor (maybe change values. Experimentation
-    double drivetrain_scale_factor = 0.55;
+    double drivetrain_scale_factor = 0.65;
+    //double drivetrain_scale_factor = 1;
 
     //just setting things to give base values (doesn't mean anything)
     double motor_power_base = 1;
@@ -51,6 +55,8 @@ public class CSDriverTest extends LinearOpMode{
     private int oldLeftPos = 0;
     private int oldRightPos = 0;
     private int oldHeadPos = 0;
+    private double CS_pos = 0;
+    private boolean turbo = false;
 
     //note, in a mechanum drivetrain, you will frequently need to
     //make use of wheels that are ACROSS the robot from one another
@@ -99,6 +105,9 @@ public class CSDriverTest extends LinearOpMode{
         BL = hardwareMap.get(DcMotor.class, "BL");
         VS = hardwareMap.get(DcMotor.class, "VS");
         WG = hardwareMap.get(DcMotor.class, "WG");
+        PP = hardwareMap.get(Servo.class, "PP");
+        CS = hardwareMap.get(Servo.class, "CS");
+        launch = hardwareMap.get(Servo.class, "launch");
 
         //tell the motors to read their encoders (and reset each one)
         FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -112,7 +121,10 @@ public class CSDriverTest extends LinearOpMode{
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         VS.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        WG.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        WG.setTargetPosition(0);
+        CS.setPosition(0);
+        WG.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        WG.setPower(1);
 
         //tell the motors to run backward or forward depending on what makes
         // it easiest to drive (different for different drive trains)
@@ -132,8 +144,6 @@ public class CSDriverTest extends LinearOpMode{
         VS.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         WG.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
-
         //set the odometry encoders to shadow the motors
         leftEncoder = FL;
         rightEncoder = BR;
@@ -148,15 +158,15 @@ public class CSDriverTest extends LinearOpMode{
             // base of motor power
             motor_power_base = gamepad1.left_stick_y;
 
-            // differentiating between ac and bd motors (strafing code)
-            a_BR_power_base = motor_power_base - gamepad1.right_stick_x;
-            b_BL_power_base = motor_power_base + gamepad1.right_stick_x;
+            // differentiating between ac and bd motors (turning code)
+            a_BR_power_base = motor_power_base + gamepad1.right_stick_x;
+            b_BL_power_base = motor_power_base - gamepad1.right_stick_x;
 
-            // setting the actual powers (turning code) - to make unable to turn right, remove the minuses
-            FL_power = a_BR_power_base - gamepad1.left_stick_x;
-            FR_power = b_BL_power_base + gamepad1.left_stick_x;
-            BR_power = a_BR_power_base + gamepad1.left_stick_x;
-            BL_power = b_BL_power_base - gamepad1.left_stick_x;
+            // setting the actual powers (strafing code) - to make unable to turn right, remove the minuses
+            FL_power = a_BR_power_base + gamepad1.left_stick_x;
+            FR_power = b_BL_power_base - gamepad1.left_stick_x;
+            BR_power = a_BR_power_base - gamepad1.left_stick_x;
+            BL_power = b_BL_power_base + gamepad1.left_stick_x;
 
             // clip all the powers down to 1
             FL_power = Range.clip(FL_power * drivetrain_scale_factor, -1.0, 1.0);
@@ -171,36 +181,104 @@ public class CSDriverTest extends LinearOpMode{
             BR.setPower(-1*BR_power);
             BL.setPower(-1*BL_power);
 
-            VS_power = gamepad2.right_stick_y*0.8;
+            VS_power = -1*gamepad2.right_stick_y;
 
-            if (VS.getCurrentPosition()>-100) {
+            if (VS.getCurrentPosition()<0) {
 
-                VS_power = Range.clip(VS_power, -1,0);
+                VS_power = Range.clip(VS_power*2, 0,1);
 
-            } else if (VS.getCurrentPosition()>-2200) {
+            } else if (VS.getCurrentPosition()<7500) {
                 
                 VS_power = Range.clip(VS_power, -1,1);
                 
             } else {
                 
-                VS_power = Range.clip(VS_power, 0,1);
+                VS_power = Range.clip(VS_power, -1,0);
                 
             }
-
+            
+            
             VS.setPower(VS_power);
             telemetry.addData("Position of arm: ", VS.getCurrentPosition());
 
 
-            WG.setPower(-1*gamepad2.left_stick_y);
-            
-            if (WG.getCurrentPosition()<60) {
+            if (gamepad2.a) {
+
+                WG.setTargetPosition(0);
+
+
+            } else if (gamepad2.y) {
+
+                WG.setTargetPosition(1000);
+
+            } else if (gamepad2.dpad_up) {
                 
-                VS_power = Range.clip(VS_power, 0,1);
+                WG.setTargetPosition(2900);
+                
+            } else if (gamepad2.dpad_down) {
+                
+                WG.setTargetPosition(1500);
+                
+            } else if (gamepad2.b) {
+                
+                WG.setTargetPosition(80);
                 
             }
             
+            //WG.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //WG.setPower(gamepad2.left_stick_y);
 
+            if (gamepad1.left_bumper || gamepad1.right_bumper) {
 
+                if (turbo == false){
+                    
+                    turbo = true;
+                    
+                } else {
+                    
+                    turbo = true;
+                    
+                }
+
+            } 
+            
+            if (gamepad2.left_bumper && gamepad2.right_bumper) {
+
+                launch.setPosition(0);
+
+            } else if (gamepad2.left_trigger>0.8 || gamepad2.right_trigger>0.8) {
+
+                launch.setPosition(1);
+
+            }
+            
+            if (gamepad1.a) {
+                
+                PP.setPosition(0);
+                
+            } else if (gamepad1.y) {
+                
+                PP.setPosition(1);
+                
+            }
+            
+            if (gamepad2.dpad_left) {
+                
+                CS_pos += 0.005;
+                CS.setPosition(CS_pos);
+                
+            } else if (gamepad2.dpad_right) {
+                
+                CS_pos -= 0.005;
+                CS.setPosition(CS_pos-0.005);
+                
+            }
+            
+            
+            
+
+            telemetry.addData("CS Pos Theory: ", CS_pos);
+            telemetry.addData("CS Pos Actual: ", CS.getPosition());
             telemetry.addData("Motor 0 Odometry:", FR.getCurrentPosition());
             telemetry.addData("Motor 1 Odometry:", FL.getCurrentPosition());
             telemetry.addData("Motor 2 Odometry:", BR.getCurrentPosition());
