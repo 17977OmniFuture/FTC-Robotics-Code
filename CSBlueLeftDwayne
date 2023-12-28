@@ -72,6 +72,7 @@ public class CSBlueLeftDwayne extends LinearOpMode {
     private DcMotor BL = null; //port 3
     private DcMotor VS = null;
     private DcMotor WG = null;
+    private Servo PP = null;
     private Servo CS = null;
     boolean detected = false;
 
@@ -308,6 +309,12 @@ public class CSBlueLeftDwayne extends LinearOpMode {
 
 
     }
+    
+    private void ServoPP (double target) {
+        
+        PP.setPosition(target);
+        
+    } // 1=open 0=closed
 
     @Override
     public void runOpMode() {
@@ -321,6 +328,7 @@ public class CSBlueLeftDwayne extends LinearOpMode {
         VS = hardwareMap.get(DcMotor.class, "VS");
         WG = hardwareMap.get(DcMotor.class, "WG");
         CS = hardwareMap.get(Servo.class,   "CS");
+        PP = hardwareMap.get(Servo.class, "PP");
         WG.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         WG.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -335,7 +343,7 @@ public class CSBlueLeftDwayne extends LinearOpMode {
             //if it sees an object
             //move forward and drop object
             //wait
-            CS.setPosition(0.5);
+            CS.setPosition(0.46);
             MoveForwardDistance(400,0.3);
             sleep(1000);
             telemetryTfod();
@@ -359,17 +367,17 @@ public class CSBlueLeftDwayne extends LinearOpMode {
                 sleep(1000);
                 MoveForwardDistance(400,0.6);
                 sleep(800);
-                RaiseArm(150);
+                RaiseArm(500);
                 sleep(1200);
                 MoveForwardDistance(-1200,0.2);
-                RaiseArm(20);
+                //RaiseArm(20);
                 sleep(2500);
                 Turn(700,0.3);
                 sleep(1000);
-                MoveForwardDistance(1800,0.3);
+                MoveForwardDistance(2000,0.3);
                 sleep(3500);
                 RaiseArm(0);
-                Strafe(-700,-0.7,0);
+                ServoPP(1);
                 sleep(30000);
 
             } else {
@@ -392,20 +400,24 @@ public class CSBlueLeftDwayne extends LinearOpMode {
 
                     telemetry.addData("Recognized 2!", CS.getPosition());
                     telemetry.update();
-                    MoveForwardDistance(700, 0.4);
-                    sleep(2000);
-                    RaiseArm(150);
+                    MoveForwardDistance(650, 0.4);
+                    sleep(1500);
+                    RaiseArm(500);
                     sleep(700);
                     MoveForwardDistance(-500,0.2);
-                    RaiseArm(20);
+                    //RaiseArm(20);
                     sleep(1800);
                     Turn(1000, 0.3);
                     sleep(3000);
                     MoveForwardDistance(1200, 0.3);
                     sleep(2000);
                     RaiseArm(0);
-                    sleep(3000);
+                    sleep(1000);
                     Strafe(-1300,-0.7,0);
+                    sleep(2000);
+                    MoveForwardDistance(800,0.4);
+                    sleep(500);
+                    ServoPP(1);
                     sleep(30000);
                     
 
@@ -415,19 +427,18 @@ public class CSBlueLeftDwayne extends LinearOpMode {
                     telemetry.update();
                     Turn(-600,-0.3);
                     sleep(1500);
-                    MoveForwardDistance(650,0.3);
-                    RaiseArm(150);
+                    MoveForwardDistance(550,0.3);
+                    RaiseArm(500);
                     sleep(1200);
-                    MoveForwardDistance(-1200,0.2);
-                    RaiseArm(20);
+                    MoveForwardDistance(-1150,0.2);
+                    //RaiseArm(20);
                     sleep(2500);
                     Turn(1650,0.3);
                     sleep(3000);
-                    MoveForwardDistance(1100,0.5);
+                    MoveForwardDistance(1300,0.5);
                     sleep(1500);
                     RaiseArm(0);
-                    sleep(2000);
-                    Strafe(-250,-0.8,0);
+                    ServoPP(1);
                     sleep(30000);
 
 
