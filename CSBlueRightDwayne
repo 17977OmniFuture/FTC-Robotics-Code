@@ -314,7 +314,7 @@ public class CSBlueRightDwayne extends LinearOpMode {
         
         PP.setPosition(target);
         
-    }
+    } // 1=open 0=closed
 
     @Override
     public void runOpMode() {
@@ -337,6 +337,8 @@ public class CSBlueRightDwayne extends LinearOpMode {
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
         waitForStart();
+        ServoPP(0);
+        RaiseArm(0);
 
         if (opModeIsActive()) {
 
@@ -362,16 +364,23 @@ public class CSBlueRightDwayne extends LinearOpMode {
 
                 telemetry.addData("Recognized 1!", CS.getPosition());
                 telemetry.update();
-                MoveForwardDistance(550,0.4);
-                sleep(1400);
-                Turn(1050,0.3);
-                sleep(3000);
-                MoveForwardDistance(3000,0.6);
-                sleep(3000);
+                MoveForwardDistance(520,0.4);
+                sleep(1500);
+                Turn(1050,0.6);
+                sleep(2000);
+                MoveForwardDistance(750,0.4);
+                sleep(1500);
+                ServoPP(1);
+                sleep(500);
+                MoveForwardDistance(4000,0.6);
+                sleep(4500);
+                Strafe(1700,1,1);
+                sleep(1800);
+                MoveForwardDistance(400,0.9);
                 RaiseArm(100);
-                Strafe(1000,1,1);
+                sleep(400);
+                MoveForwardDistance(-400,0.6);
                 sleep(1000);
-                MoveForwardDistance(1000,0.4);
                 RaiseArm(0);
                 sleep(30000);
 
@@ -380,28 +389,35 @@ public class CSBlueRightDwayne extends LinearOpMode {
                 //move cam servo to look at next position
                 MoveForwardDistance(250,0.3);
                 CS.setPosition(0.61);
-                sleep(1000);
+                sleep(800);
                 telemetryTfod();
-                sleep(1000);
+                sleep(800);
                 telemetry.update();
                 telemetryTfod();
-                sleep(1000);
+                sleep(800);
                 telemetry.update();
                 telemetryTfod();
-                sleep(1000);
+                sleep(800);
                 telemetry.update();
 
                 if (detected==true) {
 
                     telemetry.addData("Recognized 2!", CS.getPosition());
                     telemetry.update();
-                    MoveForwardDistance(1500, 0.4);
-                    sleep(2000);
-                    ServoPP(0);
+                    MoveForwardDistance(900, 0.4);
                     sleep(1000);
-                    Turn(1100, 0.3);
-                    sleep(3000);
-                    MoveForwardDistance(4000, 0.3);
+                    ServoPP(1);
+                    sleep(500);
+                    MoveForwardDistance(900,0.4);
+                    sleep(2000);
+                    Turn(1100, 0.5);
+                    sleep(2000);
+                    MoveForwardDistance(4400, 0.3);
+                    RaiseArm(100);
+                    sleep(7000);
+                    MoveForwardDistance(-400,0.8);
+                    sleep(500);
+                    RaiseArm(0);
                     sleep(30000);
                     
 
@@ -412,19 +428,25 @@ public class CSBlueRightDwayne extends LinearOpMode {
                     sleep(1400);
                     MoveForwardDistance(400,0.6);
                     sleep(1000);
-                    Turn(-1050,-0.3);
+                    Turn(-1075,-0.2);
                     sleep(3000);
-                    MoveForwardDistance(800,0.6);
+                    MoveForwardDistance(390,0.6);
+                    sleep(500);
+                    ServoPP(1);
+                    //sleep(500);
+                    //MoveForwardDistance(400,0.6);
+                    sleep(1000);
+                    Strafe(-1300,-1,0);
                     sleep(2000);
-                    Turn(1050,0.3);
-                    sleep(3000);
-                    MoveForwardDistance(1400,0.6);
-                    sleep(3000);
-                    Turn(1050,0.3);
-                    sleep(3000);
-                    MoveForwardDistance(5000,0.6);
-                    sleep(3000);
-                    Strafe(1000,0.5,0);
+                    MoveForwardDistance(-4500,0.9);
+                    sleep(4000);
+                    Strafe(400,1,1);
+                    RaiseArm(100);
+                    sleep(1000);
+                    Turn(-400,-0.5);
+                    sleep(800);
+                    MoveForwardDistance(-400,0.5);
+                    RaiseArm(0);
                     sleep(30000);
 
 
