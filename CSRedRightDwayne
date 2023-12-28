@@ -72,6 +72,7 @@ public class CSRedRightDwayne extends LinearOpMode {
     private DcMotor BL = null; //port 3
     private DcMotor VS = null;
     private DcMotor WG = null;
+    private Servo PP = null;
     private Servo CS = null;
     boolean detected = false;
 
@@ -303,11 +304,16 @@ public class CSRedRightDwayne extends LinearOpMode {
     private void RaiseArm (int target) {
 
         WG.setTargetPosition(target);
-        WG.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         WG.setPower(1);
 
 
     }
+    
+    private void ServoPP (double target) {
+        
+        PP.setPosition(target);
+        
+    } // 1=open 0=closed
 
     @Override
     public void runOpMode() {
@@ -321,13 +327,9 @@ public class CSRedRightDwayne extends LinearOpMode {
         VS = hardwareMap.get(DcMotor.class, "VS");
         WG = hardwareMap.get(DcMotor.class, "WG");
         CS = hardwareMap.get(Servo.class,   "CS");
-        WG.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        // Wait for the DS start button to be touched.
-        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch Play to start OpMode");
-        telemetry.update();
-        waitForStart();
+        PP = hardwareMap.get(Servo.class,   "PP");
+        WG.setTargetPosition(0);
+        WG.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -341,9 +343,7 @@ public class CSRedRightDwayne extends LinearOpMode {
             //move forward and drop object
             //wait
             CS.setPosition(0.42);
-            MoveForwardDistance(400,0.3);
-            sleep(1000);
-            telemetryTfod();
+            MoveForwardDistance(500,0.3);
             sleep(1000);
             telemetry.update();
             telemetryTfod();
@@ -352,6 +352,11 @@ public class CSRedRightDwayne extends LinearOpMode {
             telemetryTfod();
             sleep(1000);
             telemetry.update();
+            telemetryTfod();
+            sleep(1000);
+            telemetry.update();
+            telemetryTfod();
+            sleep(500);
 
 
             if (detected==true) {
@@ -362,7 +367,7 @@ public class CSRedRightDwayne extends LinearOpMode {
                 sleep(800);
                 Turn(800,0.5);
                 sleep(3000);
-                MoveForwardDistance(450,0.6);
+                MoveForwardDistance(400,0.6);
                 sleep(800);
                 RaiseArm(250);
                 sleep(700);
@@ -370,22 +375,23 @@ public class CSRedRightDwayne extends LinearOpMode {
                 RaiseArm(50);
                 sleep(1800);
                 Turn(-1800,-0.3);
-                sleep(4000);
-                MoveForwardDistance(1200,0.3);
-                sleep(3500);
-                RaiseArm(-20);
                 sleep(3000);
-                Strafe(1300,0.7,1);
+                MoveForwardDistance(1500,0.3);
+                sleep(2000);
+                RaiseArm(0);
+                Strafe(1400,0.4,1);
+                sleep(3000);
+                MoveForwardDistance(800,0.4);
+                sleep(1800);
+                ServoPP(1);
                 sleep(30000);
 
             } else {
 
                 //move cam servo to look at next position
-                MoveForwardDistance(200,0.3);
+                MoveForwardDistance(100,0.3);
                 CS.setPosition(0.56);
                 sleep(1000);
-                telemetryTfod();
-                sleep(1000);
                 telemetry.update();
                 telemetryTfod();
                 sleep(1000);
@@ -393,12 +399,16 @@ public class CSRedRightDwayne extends LinearOpMode {
                 telemetryTfod();
                 sleep(1000);
                 telemetry.update();
+                telemetryTfod();
+                sleep(1000);
+                telemetry.update();
+                telemetryTfod();
 
                 if (detected==true) {
 
                     telemetry.addData("Recognized 2!", CS.getPosition());
                     telemetry.update();
-                    MoveForwardDistance(780, 0.4);
+                    MoveForwardDistance(800, 0.4);
                     sleep(2000);
                     RaiseArm(150);
                     sleep(700);
@@ -407,43 +417,38 @@ public class CSRedRightDwayne extends LinearOpMode {
                     sleep(1800);
                     Turn(-1000, -0.3);
                     sleep(3000);
-                    MoveForwardDistance(1200, 0.3);
-                    sleep(2000);
-                    RaiseArm(-20);
+                    MoveForwardDistance(1500, 0.3);
                     sleep(3000);
-                    Strafe(1300,0.7,1);
+                    Strafe(1500,0.5,1);
+                    sleep(2000);
+                    MoveForwardDistance(500,0.5);
+                    sleep(500);
+                    ServoPP(1);
+                    RaiseArm(0);
                     sleep(30000);
 
                 }  else {
 
                     telemetry.addData("Recognized 3!", CS.getPosition());
                     telemetry.update();
-                    Turn(-400,-0.3);
-                    sleep(1000);
-                    MoveForwardDistance(550,0.3);
-                    RaiseArm(120);
-                    sleep(700);
-                    MoveForwardDistance(-500,0.6);
-                    RaiseArm(30);
-                    sleep(1000);
-                    MoveForwardDistance(-500,0.6);
+                    MoveForwardDistance(800,0.4);
+                    sleep(4000);
+                    Turn(1200,0.3);
+                    sleep(2000);
+                    MoveForwardDistance(-700,0.4);
+                    sleep(2000);
+                    RaiseArm(150);
                     sleep(500);
-                    Turn(-600,-0.3);
-                    sleep(1000);
-                    MoveForwardDistance(2000,0.5);
+                    MoveForwardDistance(-1000,0.3);
                     sleep(2000);
-                    Strafe(700,0.8,1);
-                    sleep(2000);
-                    RaiseArm(-20);
+                    ServoPP(1);
+                    RaiseArm(0);
                     sleep(30000);
-                    
 
 
                 }
 
-                RaiseArm(0);
-                Strafe(1300,0.7,1);
-                sleep(30000);
+                
 
             }
             //move forward, strafe
