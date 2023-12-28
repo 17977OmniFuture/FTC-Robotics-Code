@@ -28,7 +28,7 @@ public class CSDriverTest extends LinearOpMode{
     private DcMotor headingEncoder = null;
 
     // scale factor (maybe change values. Experimentation
-    double drivetrain_scale_factor = 0.65;
+    double drivetrain_scale_factor = 0.75;
     //double drivetrain_scale_factor = 1;
 
     //just setting things to give base values (doesn't mean anything)
