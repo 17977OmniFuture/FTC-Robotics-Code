@@ -362,17 +362,29 @@ public class CSRedLeftDwayne extends LinearOpMode {
 
                 telemetry.addData("Recognized 1!", CS.getPosition());
                 telemetry.update();
-                MoveForwardDistance(550,0.4);
+                MoveForwardDistance(650,0.4);
                 sleep(1400);
                 Turn(1150,0.3);
                 sleep(3000);
-                MoveForwardDistance(700,0.6);
-                sleep(3000);
-                Strafe(1500,1,1);
+                MoveForwardDistance(400,0.6);
+                sleep(500);
+                ServoPP(1);
+                sleep(500);
+                Strafe(1500,0.5,1);
                 sleep(4000);
-                MoveForwardDistance(-4500,1);
-                sleep(5000);
-                Strafe(-1500,-1,0);
+                Turn(-100,-0.5);
+                sleep(500);
+                MoveForwardDistance(-4400,1);
+                sleep(4000);
+                Turn(-2200,-0.6);
+                sleep(3000);
+                RaiseArm(200);
+                sleep(500);
+                MoveForwardDistance(300,0.5);
+                sleep(700);
+                MoveForwardDistance(-300,0.5);
+                sleep(700);
+                RaiseArm(0);
                 sleep(30000);
 
             } else {
@@ -396,13 +408,27 @@ public class CSRedLeftDwayne extends LinearOpMode {
 
                     telemetry.addData("Recognized 2!", CS.getPosition());
                     telemetry.update();
-                    MoveForwardDistance(1500, 0.4);
-                    sleep(2000);
-                    ServoPP(0);
+                    MoveForwardDistance(650, 0.4);
                     sleep(1000);
-                    Turn(-1100, 0.3);
-                    sleep(3000);
+                    ServoPP(1);
+                    sleep(1000);
+                    MoveForwardDistance(800, 0.4);
+                    sleep(1600);
+                    Turn(-1150, 0.5);
+                    sleep(2000);
                     MoveForwardDistance(4000, 1);
+                    sleep(3000);
+                    Turn(-700,0.3);
+                    sleep(1500);
+                    MoveForwardDistance(400,0.5);
+                    sleep(1000);
+                    RaiseArm(200);
+                    sleep(500);
+                    MoveForwardDistance(-400,0.8);
+                    sleep(1000);
+                    RaiseArm(0);
+                    sleep(500);
+                    MoveForwardDistance(400,0.8);
                     sleep(30000);
                     
 
@@ -411,11 +437,25 @@ public class CSRedLeftDwayne extends LinearOpMode {
                     telemetry.addData("Recognized 3!", CS.getPosition());
                     telemetry.update();
                     sleep(1400);
-                    MoveForwardDistance(200,0.6);
-                    sleep(1000);
+                    MoveForwardDistance(100,0.3);
+                    sleep(500);
                     Turn(-1150,-0.3);
                     sleep(3000);
-                    MoveForwardDistance(4400,0.6);
+                    MoveForwardDistance(850,0.6);
+                    sleep(500);
+                    ServoPP(1);
+                    sleep(500);
+                    MoveForwardDistance(3200,0.6);
+                    sleep(3000);
+                    Strafe(1400,0.5,1);
+                    sleep(2000);
+                    MoveForwardDistance(700,0.4);
+                    sleep(1500);
+                    RaiseArm(200);
+                    sleep(500);
+                    MoveForwardDistance(-500,0.5);
+                    sleep(1000);
+                    RaiseArm(0);
                     sleep(30000);
 
 
