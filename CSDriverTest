@@ -243,11 +243,11 @@ public class CSDriverTest extends LinearOpMode{
             
             if (gamepad2.left_bumper && gamepad2.right_bumper) {
 
-                launch.setPosition(0);
+                launch.setPosition(1);
 
             } else if (gamepad2.left_trigger>0.8 || gamepad2.right_trigger>0.8) {
 
-                launch.setPosition(1);
+                launch.setPosition(0);
 
             }
             
