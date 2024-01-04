@@ -206,10 +206,9 @@ public class CSDriverTest extends LinearOpMode{
 
                 WG.setTargetPosition(0);
 
-
             } else if (gamepad2.y) {
 
-                WG.setTargetPosition(1000);
+                WG.setTargetPosition(2100);
 
             } else if (gamepad2.dpad_up) {
                 
@@ -217,7 +216,7 @@ public class CSDriverTest extends LinearOpMode{
                 
             } else if (gamepad2.dpad_down) {
                 
-                WG.setTargetPosition(1500);
+                WG.setTargetPosition(2100);
                 
             } else if (gamepad2.b) {
                 
