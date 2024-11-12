@@ -25,20 +25,22 @@ public class basicTeleOp extends LinearOpMode{
     private double motorZeroPower = 0.0;         // defines zero power for all motors initialization so we don't have to set the power to zero on each motor
     private double drivetrainSensitivity;    // use this to multiply by the motor power to adjust the speed on the drivetrain
 
-// this section is for arm motor variables
-        private DcMotor armMotor;
-    private int armMaxPosition = 1000;
+          // this section is for arm motor variables
+    private DcMotor armMotor;
+    private int armMaxPosition = 1800;
     private int armArmMinPosition = 0;
+    private double armMotorPowerSensitivity=.5;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         initHardware();
-
-        driveTrainTelemetry();
+        //driveTrainTelemetry();
         armTelemetry();
 
         while(!isStarted()){
+            armTelemetry();
+            //driveTrainTelemetry();
         }
         waitForStart();
 
@@ -47,7 +49,7 @@ public class basicTeleOp extends LinearOpMode{
             driveTrainControls();
             armMotorControls();
 
-            driveTrainTelemetry();
+            //driveTrainTelemetry();
             armTelemetry();
         }
     }
@@ -57,6 +59,11 @@ public class basicTeleOp extends LinearOpMode{
     }
         public void initArmMotor(){
             armMotor = hardwareMap.dcMotor.get("armMotor");
+            armMotor.setDirection(DcMotor.Direction.REVERSE);                         // out and add one for run with limits
+            armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotor.setPower(motorZeroPower);
+            armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         }
         public void initDrivetrain() {
@@ -116,13 +123,14 @@ public class basicTeleOp extends LinearOpMode{
         backRightMotor.setPower(backRightPower*drivetrainSensitivity);
     }
     public void armMotorControls(){
-
+        armMotor.setPower(-gamepad2.right_stick_y*armMotorPowerSensitivity);
     }
-    public void driveTrainTelemetry(){
+    /*public void driveTrainTelemetry(){
         telemetry.addData("frontRightMotor",frontRightMotor.getCurrentPosition());         // this is telemetry for the drive train motors, can use this information for writing autonomous
         telemetry.addData("frontLeftMotor",frontLeftMotor.getCurrentPosition());
         telemetry.addData("backRightMotor",backRightMotor.getCurrentPosition());
         telemetry.addData("backRightMotor",backLeftMotor.getCurrentPosition());
+        telemetry.update();
 
         if (gamepad1.right_bumper){                                                  // these lines are just for the turbo mode telemetry
             telemetry.addData("Turbo Mode Active", gamepad1.right_bumper);
@@ -132,8 +140,10 @@ public class basicTeleOp extends LinearOpMode{
             telemetry.addData("Turbo Mode Off", !gamepad1.right_bumper);
             telemetry.update();
         }
-    }
+    }*/
     public void armTelemetry(){
+        telemetry.addData("armMotor",armMotor.getCurrentPosition());
+        telemetry.update();
 
 
     }
